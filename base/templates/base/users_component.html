@@ -1,0 +1,93 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>KOLADISI Uni - Project(Hospital Management)</title>
+	<link href="{% static 'css/font-awesome.css' %}" rel="stylesheet" /> 
+	<link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'js/dataTables/dataTables.bootstrap.css' %}">
+    <style>
+        .parent{
+            height: auto; padding: 5%; background: #f5f5f5;
+        }
+        .child{
+            height: auto; padding: 30px; width: 100%; border: 1px solid #ccc; background: #fff;
+        }
+    </style>
+</head>
+<body>
+
+<div class="parent">
+    <div class="child">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                {% if request.user.status == 'doctor' %} 
+                <h4 style="padding-bottom: 5px;">Patients Table</h4>
+                {% else %}
+                <h4 style="padding-bottom: 5px;">Doctors Table</h4>
+                {% endif %}
+            <div class="">
+               {% if request.user.status == 'doctor' %} 
+                <table class="table table-striped table-bordered table-hover" id="dataTables-example" width="100%" >
+                    <thead>
+                        <tr>
+                            <th>Names</th>
+                            <th>Card Number</th>
+                            <th>Gender</th>
+                            <th>Joined</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for usr in get_all_users %}
+                        {% if usr.status == 'patient' and usr.name != None %}
+                        <tr>
+	                        <td><a href="{% url 'user-profile' usr.id %}">{{usr.name}}</a></td>
+                            <td><a href="{% url 'user-profile' usr.id %}">{{usr.card_number}}</a></td>
+                            <td><a href="{% url 'user-profile' usr.id %}">{{usr.gender}}</a></td>
+                            <td><a href="{% url 'user-profile' usr.id %}" style="color: brown;">{{usr.created|timesince}} ago</a></td>
+	                    </tr>
+                        {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <table class="table table-striped table-bordered table-hover" id="dataTables-example" width="100%" >
+                    <thead>
+                        <tr>
+                            <th>Names</th>
+                            <th>Specialisation</th>
+                            <th>Gender</th>
+                            <th>Joined</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for usr in get_all_users %}
+                        {% if usr.status == 'doctor' and usr.name != None %}
+                        <tr>
+	                        <td><a href="{% url 'user-profile' usr.id %}">Dr. {{usr.name}}</a></td>
+                            <td><a href="{% url 'user-profile' usr.id %}">{{usr.gender}}</a></td>
+                            <td><a href="{% url 'user-profile' usr.id %}">{{usr.specialisation}}</a></td>
+                            <td><a href="{% url 'user-profile' usr.id %}" style="color: brown;">{{usr.created|timesince}} ago</a></td>
+	                    </tr>
+                        {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% endif %}
+            </div>
+            <a href="{{request.META.HTTP_REFERER}}" class="btn btn-primary">Back</a>
+        </div>
+    </div>
+<script type="text/javascript" src="{% static 'js/jquery-2.0.3.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/dataTables/jquery.dataTables.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/dataTables/dataTables.bootstrap.js' %}"></script>
+	<script>
+            $(document).ready(function () {
+                $('#dataTables-example').dataTable();
+            });
+    </script>
+	
+</body>
+</html>

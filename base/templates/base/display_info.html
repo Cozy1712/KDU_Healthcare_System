@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Prescriptions Details</title>
+        <style>
+            .details{
+                height: auto; width:80%; margin: 30px 7%; padding: 30px; border: 1px solid #000;
+            }
+            p.title{
+                font-weight: bold; text-align: center; font-size: 32px; border: none;
+            }
+            p{
+                border: none;
+            }
+            hr{
+                margin-top: -20px;
+            }
+            .prescribes_details{
+                height: auto; padding: 10px; border:  1px solid black; margin-top: 10px;
+            }
+        </style>
+    </head>
+    <body>
+
+        <div class="details">
+            <p class="title">KOLADAISI UNIVERSITY CLINIC</p>
+            <hr>
+            <p>From: &nbsp; Dr. {{prescribes.user.name}}</p>
+            <div class="prescribes_details">
+                <h3>Title:  &nbsp; {{prescribes.title}}</h3>
+                <h3>Prescriptions:  &nbsp; {{prescribes.prescribed}}</h3>
+            </div>
+        </div>
+    </body>
+</html>

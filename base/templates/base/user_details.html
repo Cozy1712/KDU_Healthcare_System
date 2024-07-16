@@ -1,0 +1,292 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>KOLADISI Uni - Project(Hospital Management)</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/custom.css' %}">
+	<link href="{% static 'css/font-awesome.css' %}" rel="stylesheet" /> 
+	<link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}">
+    <link rel="shortcut icon" href="{% static 'img/myicon.ico' %}" type="image/x-icon" />
+	<link rel="stylesheet" type="text/css" href="{% static 'js/dataTables/dataTables.bootstrap.css' %}">
+</head>
+<body>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  {% if messages %}
+    {% for message in messages %}
+    <script>
+      Swal.fire({
+           icon: '{{ message.tags }}',
+           title: '{{ message.tags|capfirst }}',
+           text: '{{ message }}',
+           timer: 3000,  // Automatically close after 3 seconds
+          showConfirmButton: false,  // Do not show a confirmation button
+          position: 'top-end'
+           })
+       </script>
+    {% endfor %}
+  {% endif %}
+
+    <div id="wrapper">
+        <nav class="navbar navbar-default navbar-cls-top " role="navigation" style="margin-bottom: 0; background:dodgerblue">
+            <div class="navbar-header" style="background:dodgerblue;">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-collapse" style="background:dodgerblue;">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="{% url 'view-records' %}" style="background:dodgerblue; font-family: 'Pacifico', cursive; color: #fff;">Kdu-Hospitals</a> 
+            </div>
+  <div style="color: white;
+padding: 15px 50px 5px 50px;
+float: right;
+font-size: 16px;"> &nbsp;&nbsp;&nbsp;{{user.name}} <i class="fa fa-user"></i> &nbsp; 
+<a href="{% url 'logout' %}" class="btn btn-danger square-btn-adjust" id="logout">Logout <i class="fa fa-sign-out"></i></a> 
+</div>
+</nav>
+ <nav class="navbar-default navbar-side" role="navigation">
+            <div class="sidebar-collapse">
+                <ul class="nav" id="main-menu">
+                <li class="text-center">
+                    <img src="{{user.avatar.url}}" style="height: 120px; width: 150px;" class="user-image img-responsive" />
+                    <div style="margin-top:-10px; color: dodgerBlue">{{user.name}} ({{user.status}})</div>
+                    </li>
+                    <li>
+                        <a  href="#"><i class="fa fa-edit fa-3x"></i> Manage Profile</a>
+                    </li>   
+                      <li  >
+                        <a  style="background:dodgerblue" href="{% url 'view-records' %}"><i class="fa fa-sign-out fa-3x"></i> Back to Users-List</a>
+                    </li>
+                    <li  >
+                        <a  href="#"><i class="fa fa-users fa-3x"></i> Activities </a>
+                    </li>               
+                </ul>
+            </div>
+        </nav>   
+        <div id="page-wrapper" style="min-height: 700px;" >
+            <div id="page-inner" style=" min-height: 700px;">
+                <div class="row">
+                    <div class="col-md-12">
+                    {% if user.active == '1' %}
+                     <h3 style="color: brown">{{user.name}} <i class="fa fa-user"></i> <a href="#" style="color: green; text-decoration: none;">is activated</a></h3>   
+                    {% else %}
+                    <h3 style="color: brown">{{user.name}} <i class="fa fa-user"></i> <a href="#" style="color: red; text-decoration: none;">is deactivated</a></h3>   
+                    {% endif %}
+                    </div>
+                </div>
+                 <!-- /. ROW  -->
+                 <hr style="margin-top:-10px" />
+                 
+               <div class="row">
+                <div class="col-md-12">
+                    <!-- Form Elements -->
+                    <div class="panel panel-default">
+                        
+                        <div class="panel-heading">
+                            {% if user.status == 'doctor' %}
+                             Doctor's Personal Details
+                             {% else %}
+                             Patient's Personal Details
+                             {% endif %}
+                        </div>
+                        <div class="panel-body">
+                             <div class="row">
+                <div class="col-md-6 col-sm-6">
+                    <div class="panel panel-success">
+                        <div class="panel-heading">
+                             Full Name:  &nbsp;&nbsp;{{user.name}} 
+                        </div>
+                        <div class="panel-body">
+                            <ul class="nav nav-tabs">
+                                {% if user.status == 'doctor' %}
+                                <li class="active"><a href="#home" data-toggle="tab">Specialisation: &nbsp;&nbsp;{{user.specialisation}}</a>
+                                {% else %}
+                                <li class="active"><a href="#home" data-toggle="tab">Card Number: &nbsp;&nbsp;{{user.card_number}}</a>
+                                {% endif %}
+                                </li>
+                            </ul>
+
+                            <div class="tab-content">
+                            <div class="tab-pane fade active in" id="home">
+                            <p style="margin-top: -20px;">
+                                <div class='alert alert-success'>
+                                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>Email Address: &nbsp;&nbsp;{{user.email}}  
+                                </div>
+                                <div class='alert alert-info' style='margin-top: -15px;'>
+                                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>Gender: &nbsp;&nbsp;{{user.gender}} 
+                                </div>
+                            </p>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-md-6 col-sm-6">
+                    <div class="panel panel-success">
+                        <div class="panel-heading">
+                            Sign-up Date:  &nbsp;&nbsp;<a href="#" style="color: brown; text-decoration: none;">{{user.created}}</a>
+                        </div>
+                        <div class="panel-body">
+                            <ul class="nav nav-tabs">
+                                <li class="active"><a href="#home" data-toggle="tab">Phone Number: {{user.phone}} </a>
+                                </li>
+                            </ul>
+
+                            <div class="tab-content">
+                            <div class="tab-pane fade active in" id="home">
+                            <p style="margin-top: -20px;">
+                                <div class='alert alert-success'>
+                                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>Addr: {{user.address}}
+                                </div>
+                                <div class='alert alert-info' style='margin-top: -15px;'>
+                                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>Username:  &nbsp;&nbsp;{{user.username}}  
+                                </div>
+                            </p>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>  
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h6 style="font-weight: bolder; margin-top: 2px">Biodata: </h6>
+                        </div>
+                        <div class="panel-body">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        Biodata
+                                    </div>
+                                    <div style="padding: 15px;">
+                                        <div style="border: 1px solid #ccc; width:100%; height:auto; padding:10px">{{user.bio}}</div>
+                                        <textarea style="display: none;" name="text" disabled></textarea>
+                                    
+                        </div>
+                    </div>
+                  <a style="float:right; margin-left: 10px;" href="{% url 'delete-user' user.id %}" class="btn btn-danger">Remove <i class="fa fa-trash-o"></i></a>
+                  {% if user.active == '1' %}
+                  <a style="float:right; " href="#" data-toggle="modal" data-target="#myModal2" class="btn btn-warning">Deactivate <i class="fa fa-ban"></i></a>&nbsp;  
+                  {% else %}
+                  <a style="float:right; " href="#" data-toggle="modal" data-target="#myModal3" class="btn btn-success">Activate <i class="fa fa-check-square-o"></i></a>&nbsp;  
+                  {% endif %}
+                  <a style=" margin-left: 0px;" href="#" data-toggle="modal" data-target="#myModal1" class="btn btn-primary">Certificate <i class="fa fa-address-card-o"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+                            <div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        
+                                        <img src="{{user.certificate.url}}" style="width:100%;"/>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                            <h4 class="modal-title" id="myModalLabel2">Feedback Channel</h4>
+                                        </div>
+                                        <div class="">
+                                            <h5 style="margin-left: 10px; font-weight:bold">Are sure you want to deactivate this user?</h5>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <form method="post">
+                                                {% csrf_token %}
+                                             <input type="text" value="0" style="display: none;" name="valu"/>   
+                                            <button type="submit" name="approve" class="btn btn-success">Yes, Thanks!</button>
+                                            <button type="button" class="btn btn-danger" data-dismiss="modal" name="deactivate">NO</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal fade" id="myModal3" tabindex="-1" role="dialog" aria-labelledby="myModalLabel3" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                            <h4 class="modal-title" id="myModalLabel3">Feedback Channel</h4>
+                                        </div>
+                                        <div class="">
+                                            <h5 style="margin-left: 10px; font-weight:bold">Are sure you want to activate this user?</h5>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <form method="post">
+                                                {% csrf_token %}
+                                             <input type="text" value="1" style="display: none;" name="valu"/>   
+                                            <button type="submit" name="approve" class="btn btn-success">Yes, Thanks!</button>
+                                            <button type="button" class="btn btn-danger" data-dismiss="modal" name="activate">NO</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal fade" id="myModal4" tabindex="-1" role="dialog" aria-labelledby="myModalLabel3" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                            <h4 class="modal-title" id="myModalLabel3">Feedback Channel</h4>
+                                        </div>
+                                        <div class="">
+                                            <h5 style="margin-left: 10px; font-weight:bold">Are sure you want to permanently delete this user </h5>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <form method="post" >
+                                                {% csrf_token %}
+                                            <button type="submit" name="decline" class="btn btn-success">Yes, Thanks!</button>
+                                            <button type="button" class="btn btn-danger" data-dismiss="modal" name="delete">NO</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal fade" id="myModal5" tabindex="-1" role="dialog" aria-labelledby="myModalLabel5" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        image
+                                    </div>
+                                </div>
+                            </div>
+                            
+</div>
+</div>
+</div>
+    <!-- End Form Elements -->
+</div>
+  </div>
+    <!-- /. ROW  -->
+    </div>
+    <!-- /. PAGE INNER  -->
+    </div>
+  <!-- /. PAGE WRAPPER  -->
+</div>
+</div>
+     <!-- /. WRAPPER  -->
+    <!-- SCRIPTS -AT THE BOTOM TO REDUCE THE LOAD TIME-->
+    <!-- JQUERY SCRIPTS -->
+    <script type="text/javascript" src="{% static 'js/jquery-2.0.3.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/dataTables/jquery.dataTables.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/dataTables/dataTables.bootstrap.js' %}"></script>
+	<script>
+            $(document).ready(function () {
+                $('#dataTables-example').dataTable();
+            });
+    </script>
+
+</body>
+</html>

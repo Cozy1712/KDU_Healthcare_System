@@ -1,0 +1,114 @@
+{% extends 'main.html' %}
+
+{% block content %}
+
+
+{% if request.user.active == '1' %}
+
+
+
+    <main class="profile-page layout layout--2">
+      <div class="mobile-menu">
+        <form class="header__search" action="{% url 'home' %}" method="GET">
+          <label>
+            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+              <title>search </title>
+              <path
+                d="M32 30.586l-10.845-10.845c1.771-2.092 2.845-4.791 2.845-7.741 0-6.617-5.383-12-12-12s-12 5.383-12 12c0 6.617 5.383 12 12 12 2.949 0 5.649-1.074 7.741-2.845l10.845 10.845 1.414-1.414zM12 22c-5.514 0-10-4.486-10-10s4.486-10 10-10c5.514 0 10 4.486 10 10s-4.486 10-10 10z"
+              ></path>
+            </svg>
+            <input placeholder="Search for Consultation Room" name="q" />
+          </label>
+        </form>
+        <div class="mobile-menuItems">
+          <a class="btn btn--main btn--pill" href="{% url 'prescriptions' user3.id %}">Browse Prescriptions</a>
+        </div> 
+      </div>
+      <div class="container">
+        <!-- Room Start -->
+        <div class="room">
+          <div class="room__box scroll">
+            
+            <div class="room__conversation">
+              <div class="threads scroll" style="margin-top: 20px;">
+                
+                {% for chat in get_message %}
+                {% if request.user.email == chat.user1 and user3.email == chat.user2 or request.user.email == chat.user2 and user3.email == chat.user1  %}
+                
+                {% if chat.user.status == 'doctor' %}
+                <a href="{% url 'user-profile' user3.id %}">Dr. {{chat.user.name}}</a>  
+                {% else %}
+                <a href="{% url 'user-profile' user3.id %}">{{chat.user.name}}</a> 
+                {% endif %}
+                <div class="thread">
+                  <div class="thread__top">
+                    <div class="thread__author" style="margin-top: -40px;">
+                      <a href="#" class="thread__authorInfo">
+                        <div class="avatar avatar--small">
+                          <img src="{{chat.user.avatar.url}}" />
+                        </div>
+                        
+                      </a>
+                      <span class="thread__date">{{chat.created|timesince}} ago</span>
+                    </div>
+
+                  </div>
+                  <div class="thread__details">
+                    {{chat.chat}}
+                  </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+              </div>
+              {% if request.user.status == 'doctor' %}
+              <a href="{% url 'create-prescriptions' user3.id %}" style="margin-top: 10px;">Prescribe Drugs</a>
+              <a class="btn btn--dark" href="{{request.META.HTTP_REFERER}}" style="float: right; margin: 5px 5px;">Back</a>
+              {% endif %}
+              <!-- <p id="togg" style="margin-top: 5px; cursor: pointer;">Prescribe Drugs</p>
+              <div id="content">
+                <form method="POST" action="">
+                  {% csrf_token %}
+                  <div class="form__group">
+                    <label for="room_about">About</label>
+                    <textarea name="room_about" id="room_about" placeholder="Write about your study group..."></textarea>
+                  </div>
+                  <div class="form__action">
+                    <a class="btn btn--dark" href="index.html">Cancel</a>
+                    <button class="btn btn--main" type="submit">Create Prescriptions</button>
+                  </div>
+                </form>
+              </div> -->
+
+
+            </div>
+          </div>
+          <div class="room__message">
+            <form action="" method="post">
+              {% csrf_token %}
+              <input name="body" placeholder="Write your message here..." />
+            </form>
+          </div>
+        </div>
+        <!-- Room End -->
+
+        <!--   Start -->
+        {% include 'base/prescription_component.html' %}
+        <!--  End -->
+      </div>
+    </main>
+
+
+    {% else %}
+    <h1 style="text-align: center; color: red; font-size: larger;">Sorry, you have been temporarily deactivated...</h1>
+    <p style="text-align: center;">Please see the hospital admin for details</p>
+    {% endif %}
+
+    
+{% endblock content %}
+<script>
+  $("#content").hide();
+	$("#togg").click(function(){
+		$("#content").slideToggle();
+	});
+  </script>
+  <script src="script.js"></script>

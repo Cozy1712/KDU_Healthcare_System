@@ -1,0 +1,70 @@
+{% extends 'main.html' %}
+
+{% block content %}
+  <main class="create-room layout">
+    <div class="container">
+      <div class="layout__box">
+        <div class="layout__boxHeader">
+          <div class="layout__boxTitle">
+            <a href="{% url 'home' %}">
+              <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                <title>arrow-left</title>
+                <path
+                  d="M13.723 2.286l-13.723 13.714 13.719 13.714 1.616-1.611-10.96-10.96h27.625v-2.286h-27.625l10.965-10.965-1.616-1.607z">
+                </path>
+              </svg>
+            </a>
+            <h3>Create Health Discussion Room</h3>
+          </div>
+        </div>
+        <div class="layout__body">
+          <form class="form" action="" method="POST">
+            {% csrf_token %}
+            
+            <div class="form__group">
+              <label for="hosp_spec">Specialisation</label>
+              <input type="text" name="specialty_name" value="{{room.specialisation.name}}" required list="hosp-list" />
+              <datalist id="hosp-list">
+                <select id="hosp_spec">
+                  {% for hosp in specialty %}
+                  <option value="{{hosp.name}}">{{hosp.name}}</option>
+                  {% endfor %}
+                </select>
+              </datalist>
+            </div>
+            <!-- <div class="form__group"> 
+              <label for="room_about">hospital</label>
+                {{form.hospital}}
+            </div> -->
+            <div class="form__group">
+              <label for="room_spec">Health Topic</label> 
+                {{form.name}}
+            </div>
+
+            <!-- <div class="form__group">
+              <label for="room_spec">Specialisation</label>
+              <input type="text" name="room_spec" required list="spec-list" />
+              <datalist id="spec-list">
+                <select id="room_spec">
+                  {% for spec in specialty %}
+                  <option value="{{spec.name}}">{{specc.name}}</option>
+                  {% endfor %}
+                </select>
+              </datalist>
+            </div> -->
+
+            <div class="form__group">
+              <label for="room_about">Add Discussions</label>
+                {{form.description}}
+            </div>
+
+            <div class="form__action">
+              <a class="btn btn--dark" href="{{request.META.HTTP_REFERER}}">Cancel</a>
+              <button class="btn btn--main" type="submit">Create Room</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+{% endblock %}

@@ -1,0 +1,225 @@
+﻿{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>KOLADISI Uni - Project(Hospital Management)</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/custom.css' %}">
+	<link href="{% static 'css/font-awesome.css' %}" rel="stylesheet" /> 
+	<link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}">
+    <link rel="shortcut icon" href="{% static 'img/myicon.ico' %}" type="image/x-icon" />
+	<link rel="stylesheet" type="text/css" href="{% static 'js/dataTables/dataTables.bootstrap.css' %}">
+</head>
+<body>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  {% if messages %}
+    {% for message in messages %}
+    <script>
+      Swal.fire({
+           icon: '{{ message.tags }}',
+           title: '{{ message.tags|capfirst }}',
+           text: '{{ message }}',
+           timer: 3000,  // Automatically close after 3 seconds
+          showConfirmButton: false,  // Do not show a confirmation button
+          position: 'top-end'
+           })
+       </script>
+    {% endfor %}
+  {% endif %}
+    <div id="wrapper">
+        <nav class="navbar navbar-default navbar-cls-top " role="navigation" style="margin-bottom: 0; background:dodgerblue">
+            <div class="navbar-header" style="background:dodgerblue;">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-collapse" style="background:dodgerblue;">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="{% url 'view-records' %}" style="background:dodgerblue; color: #fff; font-family: 'Pacifico', cursive;">Kdu-Hospitals</a> 
+            </div>
+  <div style="color: white;
+padding: 15px 50px 5px 50px;
+float: right;
+font-size: 16px;"><a href="#" style="padding-block: 2px; border-radius: 4px; padding-inline: 10px; background: brown; color: #fff;"> {{get_all_users.count}}</a> &nbsp;&nbsp;&nbsp;{{request.user.name}} <i class="fa fa-user"></i> &nbsp; 
+<a href="{% url 'logout' %}" class="btn btn-danger square-btn-adjust" id="logout">Logout <i class="fa fa-sign-out"></i></a> 
+</div>
+</nav>
+ <nav class="navbar-default navbar-side" role="navigation">
+            <div class="sidebar-collapse">
+                <ul class="nav" id="main-menu">
+                <li class="text-center" style=" background:#343232;">
+                    <img src="{{ request.user.avatar.url }}" style="border: 1px solid black; width: 150px; height: 120px;" class="user-image img-responsive" />
+                    <div style="margin-top:-10px; color: dodgerBlue">{{request.user.status}}</div>
+                    </li>
+                    <li>
+                        <a  href="#"><i class="fa fa-edit fa-3x"></i> {{request.user}}</a>
+                    </li>   
+                      <li  >
+                        <a  style="background:dodgerblue" href="{% url 'view-records' %}"><i class="fa fa-sign-out fa-3x"></i> Users List</a>
+                    </li>
+                    <li  >
+                        <a  href="#"><i class="fa fa-users fa-3x"></i> Activities </a>
+                    </li>           
+                </ul>
+            </div>
+        </nav>   
+        <div id="page-wrapper" style="min-height: 700px;" >
+            <div id="page-inner" style=" min-height: 700px;">
+                <div class="row">
+                    <div class="col-md-12">
+                     <h2 style="color: dodgerblue; padding-right: 30px;">Users Record List <i class="fa fa-user"></i>
+                        <a href="#" data-toggle="modal" data-target="#myModal" style="float: right; text-decoration: none; cursor: pointer; color: brown;">Specialisation <i class="fa fa-plus"></i></a></h2>   
+                    </div>
+                </div>
+                 <!-- /. ROW  -->
+                 <hr />
+                 <div class="row">
+                <div class="col-md-12">
+                    <!-- Advanced Tables -->
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                             You have {{get_all_users.count}} record(s) 
+                             <a href="#" style="float: right; font-weight: bold;" data-toggle="modal" data-target="#myModal2"><i class="fa fa-eye"></i> View Specialisations</a>
+                        </div>
+                        <div class="panel-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered table-hover" id="dataTables-example">
+                                    <thead>
+                                        <tr>
+                                            <th>Names</th>
+                                            <th>Status</th>
+                                            <th>Gender</th>
+                                            <th>Email Adress</th>
+                                            <th>Created Date</th>
+                                            <th>Dated</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for usr in get_all_users %}
+                                        <tr>
+                                            {% if usr.status == 'doctor' %}
+                                            <!-- checking for the deactivated doctors -->
+                                            {% if usr.active == '0' %}
+                                            <td><a href="{% url 'user-details' usr.id %}" style="color: red;">Dr. {{usr.name}}</a></td>
+                                            {% else %}
+                                            <td><a href="{% url 'user-details' usr.id %}">Dr. {{usr.name}}</a></td>
+                                            {% endif %}
+                                            <!-- end of checking for the deactivated doctors -->
+                                            
+                                            {% else %}
+                                            <!-- checking for the deactivated users -->
+                                            {% if usr.active == '0' %}
+                                            <td><a href="{% url 'user-details' usr.id %}" style="color: red;">{{usr.name}}</a></td>
+                                            {% else %}
+                                            <td><a href="{% url 'user-details' usr.id %}">{{usr.name}}</a></td>
+                                            {% endif %}
+                                            <!-- end of checking for the deactivated users -->
+                                            
+                                            {% endif %}
+
+
+                                            {% if usr.active == '0' %}
+                                            <td><a href="{% url 'user-details' usr.id %}" style="color: red;">{{usr.status}}</a></td>
+                                            {% else %}
+                                            <td><a href="{% url 'user-details' usr.id %}">{{usr.status}}</a></td>
+                                            {% endif %}
+
+
+                                            {% if usr.active == '0' %}
+                                            <td><a href="{% url 'user-details' usr.id %}" style="color: red;">{{usr.gender}}</a></td>
+                                            {% else %}
+                                            <td><a href="{% url 'user-details' usr.id %}">{{usr.gender}}</a></td>
+                                            {% endif %}
+
+                                            {% if usr.active == '0' %}
+                                            <td><a href="{% url 'user-details' usr.id %}" style="color:red">{{usr.email}}</a></td>
+                                            {% else %}
+                                            <td><a href="{% url 'user-details' usr.id %}">{{usr.email}}</a></td>
+                                            {% endif %}
+
+
+                                            <td><a href="{% url 'user-details' usr.id %}" style="color: brown;">{{usr.created}}</a></td>
+                                            <td><a href="{% url 'user-details' usr.id %}" style="color: brown;">{{usr.created|timesince}} ago</a></td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <!--End Advanced Tables -->
+                </div>
+            </div>
+            </div>
+        </div>
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel3" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel3">Specialisation</h4>
+                    </div>
+                    <div class="">
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="form-group" style="padding: 15px;">
+                                <input type="text" name="specialised" class="form-control" placeholder="Enter a new Specialisation"/>
+                            </div>
+                    </div>
+                    <div class="modal-footer">
+                        <form method="post" >
+                        <button type="submit" name="decline" class="btn btn-success">Add <i class="fa fa-plus"></i></button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <!-- End Form Elements -->
+</div>
+  </div>
+    <!-- /. ROW  -->
+    </div>
+    <!-- /. PAGE INNER  -->
+    </div>
+  <!-- /. PAGE WRAPPER  -->
+</div>
+</div>
+<div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel4" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel4">List of Specialisations</h4>
+            </div>
+            <table class="table table-striped table-bordered table-hover" style="color:#777;" id="dataTables-example">
+        <thead>
+            <tr>
+                <th style="text-align: center;">List of Specialisations</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for spec in specialty %}
+            <tr>
+                <td style="text-align: center;"><a href="{% url 'delete-spec' spec.id %}">{{spec.name}}</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+            <div class="modal-footer"></div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="{% static 'js/jquery-2.0.3.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/dataTables/jquery.dataTables.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/dataTables/dataTables.bootstrap.js' %}"></script>
+	<script>
+            $(document).ready(function () {
+                $('#dataTables-example').dataTable();
+            });
+    </script>
+
+</body>
+</html>
+

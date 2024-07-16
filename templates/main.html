@@ -1,0 +1,72 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="{% static 'img/myicon.ico' %}" type="image/x-icon" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <link href="{% static 'css/font-awesome.css' %}" rel="stylesheet" />
+    <link rel="stylesheet" href=  
+"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>KOLADISI Uni - Project(Hospital Management)</title> 
+    <style>
+      .form__group { 
+            position: relative; 
+        } 
+          
+        .form__group i{ 
+            position: absolute; 
+            left: 90%; 
+            top: 60%; 
+            color: gray; 
+            cursor: pointer;
+        }
+    </style>
+  </head>
+
+  <body>
+    
+    {% include 'navbar.html' %}
+
+<!-- flash messages for login authentication -->
+        <!-- {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li>{{message}}</li>
+            {% endfor %}
+        </ul>
+        {% endif %} -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  {% if messages %}
+    {% for message in messages %}
+    <script>
+      Swal.fire({
+           icon: '{{ message.tags }}',
+           title: '{{ message.tags|capfirst }}',
+           text: '{{ message }}',
+           timer: 4000,  // Automatically close after 3 seconds
+          showConfirmButton: false,  // Do not show a confirmation button
+          position: 'top-end'
+           })
+       </script>
+    {% endfor %}
+  {% endif %}
+
+        {% block content %}
+
+
+        {% endblock content %}
+    <script src="{% static 'js/script.js' %}"></script>
+    <script src="{% static 'js/jquery-2.0.3.min.js' %}"></script>
+    <script src="{% static 'js/validation.js' %}"></script>
+    <script src="{% static 'js/jquery-ui.min.js' %}"></script>
+    <script>
+        $("#content").hide();
+        $("#togg").click(function(){
+          $("#content").slideToggle();
+        });
+      </script>
+  </body>
+</html>

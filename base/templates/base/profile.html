@@ -1,0 +1,205 @@
+{% extends 'main.html' %}
+
+{% block content %}
+<style>
+.ap_title{
+  text-align: center; height: 32px; background: transparent; border-radius: 5px;
+  color: #fff; border: 1px solid #252fad; width: 100%; margin-top: 10px;
+}
+.ap_title:focus{
+  border: none;
+}
+.ap_create{
+  text-align: center; height: 32px; background: #256fad; border-radius: 5px;
+  color: #fff; border: none; width: 100%; margin-top: 15px; cursor: pointer;
+}
+</style>
+{% if request.user.active == '1' %}
+
+
+ <main class="profile-page layout layout--3">
+    <div class="container">
+      <!-- Topics Start -->
+      {% include 'base/topic_component.html' %}
+      <!-- Topics End -->
+
+      <!-- Room List Start -->
+      <div class="roomList">
+        <div class="profile">
+          <div class="profile__avatar">
+            <div class="avatar avatar--large active">
+              <img src="{{user.avatar.url}}" />
+            </div>
+          </div>
+          <div class="profile__info">
+            <h3>{{user.name}}</h3>
+            <p>@{{user.username}}</p>
+            {% if user.status == 'doctor' %}
+            <h5 style="margin-top: -10px; color: #256fad;">Health Consultant ({{user.specialisation}})</h5>
+            {% else %}
+            <h5 style="margin-top: -10px; color: #256fad;">Client (Patient)</h5>
+            {% endif %}
+            
+            {% if request.user.email == user.email %}
+            {% if request.user.status == 'doctor' %}
+            <a href="{% url 'update-doctor' %}" class="btn btn--main btn--pill">Edit Profile</a>
+            {% else %}
+            <a href="{% url 'update-user' %}" class="btn btn--main btn--pill">Edit Profile</a>
+            {% endif %}
+            {% endif %}
+          </div>
+          <div class="profile__about">
+            <h3>About</h3>
+            <p>
+              {{user.bio}} 
+            </p>
+          </div>
+        </div>
+        <a href="{% url 'view-users' %} " style="font-weight: bold; color:#256fad;">view users <i class="fa fa-eye"></i></a>
+        {% if request.user.status == 'doctor' and user.status == 'patient' or request.user.status == 'patient' and user.status == 'doctor' %}
+        <div class="roomList__header">
+          <div>
+            <em><a href="{% url 'user-chat-profile' user.id %}">Chat with {{user.name}}</a> </em>
+            {% if user.status == 'doctor' %}  
+              <p>Book Appointment with <a>Dr. {{user.name}}</a> </p>
+              {% else %}
+              <p>Book Appointment with <a>({{user.name}})</a> </p>
+              {% endif %}
+          </div>
+          <a class="btn btn--main" href="{% url 'create-appointment' user.id %}">
+            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+              <title>add</title>
+              <path
+                d="M16.943 0.943h-1.885v14.115h-14.115v1.885h14.115v14.115h1.885v-14.115h14.115v-1.885h-14.115v-14.115z"
+              ></path>
+            </svg>
+            Book Appointment 
+          </a>
+        </div>
+        {% endif %}
+
+
+        <!-- Beginning of Appointments -->
+        <div class="roomListRoom">
+        <div class="activities__header">
+          <h2>Recent Appointments </h2>
+        </div>
+        {% for appoint in appointment %} 
+        {% if request.user.email == appoint.user1 or request.user.email == appoint.user2 %}
+        <div class="activities__box">
+          <div class="activities__boxHeader roomListRoom__header">
+            <a href="{% url 'user-profile' appoint.user.id %}" class="roomListRoom__author">
+              <div class="avatar avatar--small">
+                <img src="{{appoint.user.avatar.url}}" />
+              </div>
+              <p>
+                @{{appoint.user.name}}
+                <span>{{appoint.created|timesince}} ago</span>
+              </p>
+            </a>
+    
+            <div class="roomListRoom__actions">
+              <a href="{% url 'update-appointment' appoint.id %}">
+                <svg
+                  enable-background="new 0 0 24 24"
+                  height="32"
+                  viewBox="0 0 24 24"
+                  width="32"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <title>edit</title>
+                  <g>
+                    <path d="m23.5 22h-15c-.276 0-.5-.224-.5-.5s.224-.5.5-.5h15c.276 0 .5.224.5.5s-.224.5-.5.5z" />
+                  </g>
+                  <g>
+                    <g>
+                      <path
+                        d="m2.5 22c-.131 0-.259-.052-.354-.146-.123-.123-.173-.3-.133-.468l1.09-4.625c.021-.09.067-.173.133-.239l14.143-14.143c.565-.566 1.554-.566 2.121 0l2.121 2.121c.283.283.439.66.439 1.061s-.156.778-.439 1.061l-14.142 14.141c-.065.066-.148.112-.239.133l-4.625 1.09c-.038.01-.077.014-.115.014zm1.544-4.873-.872 3.7 3.7-.872 14.042-14.041c.095-.095.146-.22.146-.354 0-.133-.052-.259-.146-.354l-2.121-2.121c-.19-.189-.518-.189-.707 0zm3.081 3.283h.01z"
+                      />
+                    </g>
+                    <g>
+                      <path
+                        d="m17.889 10.146c-.128 0-.256-.049-.354-.146l-3.535-3.536c-.195-.195-.195-.512 0-.707s.512-.195.707 0l3.536 3.536c.195.195.195.512 0 .707-.098.098-.226.146-.354.146z"
+                      />
+                    </g>
+                  </g>
+                </svg>
+              </a>
+              <a href="{% url 'delete-appointment' appoint.id %}">
+                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                  <title>remove</title>
+                  <path
+                    d="M27.314 6.019l-1.333-1.333-9.98 9.981-9.981-9.981-1.333 1.333 9.981 9.981-9.981 9.98 1.333 1.333 9.981-9.98 9.98 9.98 1.333-1.333-9.98-9.98 9.98-9.981z"
+                  ></path>
+                </svg>
+              </a>
+            </div>
+    
+          </div>
+          <div class="activities__boxContent">
+            <p><a href="#">{{appoint.title}}</a></p>
+            <p> On {{appoint.date}} ({{appoint.time}})</p>
+            <div class="activities__boxRoomContent" style="padding-inline: 40px;">
+              
+              <!-- sender's view -->
+              {% if request.user.email == appoint.user1 %}
+    
+                <!-- if appointment is rejected -->
+                {% if appoint.appt_status == '0' %}
+                <span style="color: red;">Appointment rejected</span>
+                <!-- if appointment is accepted -->
+                {% elif appoint.appt_status == '1' %}
+                <span style="color:green;">Appointment accepted</span>
+                <!-- pending appointments -->
+                {% else %}
+                <span style="text-align: center; margin-left: 35%;">Pending...</span>
+                {% endif %}
+    
+              <!-- receiver's view -->
+              {% else %}
+              <!-- if appointment is rejected -->
+                {% if appoint.appt_status == '0' %}
+                  <span style="color: red;">Appointment rejected</span>
+              <!-- if appointment is accepted -->
+                {% elif appoint.appt_status == '1' %}
+                  <span style="color:green;">Appointment accepted</span>
+              <!-- pending appointments -->
+                {% else %}
+                  <a href="{% url 'reject-appointment' appoint.id %}" style=" cursor: pointer; text-decoration: none; color: red;">Reject</a>
+                  <a href="{% url 'accept-appointment' appoint.id %}" style=" cursor: pointer; text-decoration: none; color: green; float: right;">Accept</a>
+                {% endif %}
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+
+        </div>
+
+        
+        <!-- Ends of Appointments -->
+      </div>
+      <!-- Room List End -->
+
+      <!-- Activities Start -->
+      {% include 'base/appointment_component.html' %}
+      <!-- Activities End -->
+    </div>
+  </main>
+
+
+  {% else %}
+  <h1 style="text-align: center; color: red; font-size: larger;">Sorry, you have been temporarily deactivated...</h1>
+  <p style="text-align: center;">Please see the hospital admin for details</p>
+  {% endif %}
+
+
+{% endblock content %}
+  <script>
+  $("#content").hide();
+	$("#togg").click(function(){
+		$("#content").slideToggle();
+	});
+
+  </script>
